@@ -72,10 +72,10 @@ tr:last-child td{border-bottom:none;}
 .col1-undone *{color:var(--ink3)!important;}
 .col2-done{background:#edf7e4;}
 .col2-notneeded *{color:var(--ink3)!important;}
-.col4-action{background:#FEF7E2;}
-.col4-done{background:#edf7e4;}
-.col4-exempt{background:#F0F0FB;}
-.col4-none{background:#f7f7f5;}
+.col4-action{}
+.col4-done{}
+.col4-exempt{}
+.col4-none{}
 
 .pill{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:3px;margin:1px 2px 1px 0;letter-spacing:.02em;}
 .pill-must{background:#534AB7;color:#fff;}
@@ -330,8 +330,7 @@ function generate(){
       let col1Content='';
       if(idx===0){
         col1Content=
-          '<div style="font-weight:'+(oldCompleted?700:400)+';font-size:12px">'+row.old+'</div>'+
-          '<div style="font-size:10px;margin-top:1px">'+row.oldName+'</div>'+
+          '<div style="font-weight:'+(oldCompleted?700:400)+';font-size:11px">'+row.old+' '+row.oldName+'</div>'+
           (!isOld
             ?'<div style="font-size:9.5px;margin-top:3px;color:var(--ink3)">新學員</div>'
             :oldCompleted
@@ -358,10 +357,10 @@ function generate(){
       if(nmDone){
         if(bridgeNote){
           col4Class='col4-action';
-          col4Content='<span class="pill pill-done">已完訓</span><div class="action-bridge" style="margin-top:5px">需補修銜接課程'+(nmId==='NM8'?'（24小時）':'（4小時）')+'</div>'+bridgeNote;
+          col4Content='<div class="action-bridge"><span class="pill pill-bridge">需補修</span> 銜接課程'+(nmId==='NM8'?'（24小時）':'（4小時）')+'</div>'+bridgeNote;
         }else{
           col4Class='col4-done';
-          col4Content='<span class="pill pill-done">已完訓</span><div class="action-done" style="margin-top:3px">✓ 無需補修</div>';
+          col4Content='<div class="action-done"><span class="pill pill-done">已完訓</span> ✓ 無需補修</div>';
         }
       }else if(isCfpOnly&&goal==='AFP'){
         col4Class='col4-none';col4Content='<div class="action-skip">AFP 目標無需修習</div>';
