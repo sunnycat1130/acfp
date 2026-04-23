@@ -87,8 +87,6 @@ tr:last-child td{border-bottom:none;}
 
 .nm-name{font-weight:700;color:var(--ink);font-size:12px;}
 .exempt-txt{font-size:10.5px;color:var(--ink2);line-height:1.55;}
-.exempt-item{padding:2px 0;border-bottom:1px dashed var(--border);}
-.exempt-item:last-child{border-bottom:none;}
 .no-exempt{font-size:10.5px;color:var(--red);font-weight:600;}
 .action-needed{font-size:11px;font-weight:700;color:#791F1F;line-height:1.5;}
 .action-done{font-size:11px;color:var(--green);font-weight:600;}
@@ -188,10 +186,9 @@ tr:last-child td{border-bottom:none;}
         <div class="summary-area" id="rpt-summary"></div>
       </div>
       <div class="std-box" style="width:100%;flex-shrink:0;">
-        <div class="std-title">AFP / CFP® 報考標準說明</div>
         <div class="std-body">
-          <strong>AFP 報考條件：</strong>須完成 NM5、NM6、NM7 三科必修，加上 NM1～NM4 中任意 2 科以上選修，合計至少 5 科，方可報名。每年 3 月及 9 月各舉辦一次。&nbsp;&nbsp;
-          <strong>CFP® 報考條件：</strong>在 AFP 條件基礎上，須另外完訓 NM8（40小時，<strong style="color:var(--red)">無任何抵免</strong>），並須先通過 AFP 測驗（成績保留 5 年），始得報考 CFP® 測驗。
+          <strong>AFP 報考條件：</strong>須完成 NM5、NM6、NM7 三科必修，加上 NM1～NM4 中任意 2 科以上選修，合計至少 5 科，方可報名。&nbsp;&nbsp;&nbsp;
+          <strong>CFP 報考條件：</strong>在 AFP 條件基礎上，須另外完訓 NM8（40小時，無任何抵免），並須先通過 AFP 測驗（成績保留 5 年），始得報考 CFP 測驗。
         </div>
       </div>
     </div>
@@ -309,7 +306,7 @@ function generate(){
       const col2Class=nmDone?'col2-done':'col2-notneeded'===''?'':isAfpMust?'col2-must':isAfpPick?'col2-pick':(isCfpOnly&&goal==='CFP')?'col2-cfponly':'col2-notneeded';
 
       const col3Content=nm.exempt.length>0
-        ?`<div class="exempt-txt">${nm.exempt.map(e=>`<div class="exempt-item">${e.startsWith('⚠')?`<span style="color:var(--red);font-weight:600">${e}</span>`:e}</div>`).join('')}</div>`
+        ?`<div class="exempt-txt">${nm.exempt.map(e=>e.startsWith('⚠')?`<span style="color:var(--red);font-weight:600">${e}</span>`:e).join(' ｜ ')}</div>`
         :`<span class="no-exempt">無抵免途徑</span>`;
 
       let col4Class,col4Content;
