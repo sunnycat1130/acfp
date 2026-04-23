@@ -106,7 +106,7 @@ tr:last-child td{border-bottom:none;}
 .summary-body{font-size:11px;line-height:1.65;color:var(--ink2);}
 .summary-body ul{padding-left:14px;margin-top:3px;}
 .summary-body li{margin-bottom:1px;}
-.std-box{width:216px;flex-shrink:0;background:#f0efec;border-radius:9px;padding:10px 13px;border:1px solid var(--border);}
+.std-box{background:#f0efec;border-radius:9px;padding:10px 13px;border:1px solid var(--border);}
 .std-title{font-size:10.5px;font-weight:700;color:var(--ink);margin-bottom:5px;border-bottom:1px solid var(--border);padding-bottom:5px;}
 .std-body{font-size:10.5px;color:var(--ink2);line-height:1.7;}
 .std-body strong{color:var(--ink);}
@@ -147,11 +147,8 @@ tr:last-child td{border-bottom:none;}
         </div>
 
         <div class="field">
-          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:5px;">
-            <div class="field-label" style="margin-bottom:0;">03 &nbsp;舊課綱已完訓模組</div>
-            <a href="https://www.fpat.org.tw/Login" target="_blank" class="fpat-inline">臺灣理財顧問認證協會 — 登入查詢完訓紀錄 ↗</a>
-          </div>
-          <div class="check-group" id="old-checks">
+          <div class="field-label">03 &nbsp;舊課綱已完訓模組</div>
+          <div class="check-group" id="old-checks" style="display:grid;grid-template-columns:repeat(3,auto);gap:5px;justify-content:start;">
             <div class="check-opt"><input type="checkbox" id="om1" value="M1" disabled onchange="generate()"><label for="om1">M1</label></div>
             <div class="check-opt"><input type="checkbox" id="om2" value="M2" disabled onchange="generate()"><label for="om2">M2</label></div>
             <div class="check-opt"><input type="checkbox" id="om3" value="M3" disabled onchange="generate()"><label for="om3">M3</label></div>
@@ -159,6 +156,7 @@ tr:last-child td{border-bottom:none;}
             <div class="check-opt"><input type="checkbox" id="om5" value="M5" disabled onchange="generate()"><label for="om5">M5</label></div>
             <div class="check-opt"><input type="checkbox" id="om6" value="M6" disabled onchange="generate()"><label for="om6">M6</label></div>
           </div>
+          <a href="https://www.fpat.org.tw/Login" target="_blank" class="fpat-inline" style="display:inline-block;margin-top:7px;">按此登錄協會查詢完訓紀錄 ↗</a>
         </div>
 
         <div class="field">
@@ -188,12 +186,12 @@ tr:last-child td{border-bottom:none;}
 
       <div class="bottom-strip">
         <div class="summary-area" id="rpt-summary"></div>
-        <div class="std-box">
-          <div class="std-title">AFP / CFP® 報考標準說明</div>
-          <div class="std-body">
-            <strong>AFP 報考條件：</strong>須完成 NM5、NM6、NM7 三科必修，加上 NM1～NM4 中任意 2 科以上選修，合計至少 5 科，方可報名。每年 3 月及 9 月各舉辦一次。<br><br>
-            <strong>CFP® 報考條件：</strong>在 AFP 條件基礎上，須另外完訓 NM8（40小時，<strong style="color:var(--red)">無任何抵免</strong>），並須先通過 AFP 測驗（成績保留 5 年），始得報考 CFP® 測驗。
-          </div>
+      </div>
+      <div class="std-box" style="width:100%;flex-shrink:0;">
+        <div class="std-title">AFP / CFP® 報考標準說明</div>
+        <div class="std-body">
+          <strong>AFP 報考條件：</strong>須完成 NM5、NM6、NM7 三科必修，加上 NM1～NM4 中任意 2 科以上選修，合計至少 5 科，方可報名。每年 3 月及 9 月各舉辦一次。&nbsp;&nbsp;
+          <strong>CFP® 報考條件：</strong>在 AFP 條件基礎上，須另外完訓 NM8（40小時，<strong style="color:var(--red)">無任何抵免</strong>），並須先通過 AFP 測驗（成績保留 5 年），始得報考 CFP® 測驗。
         </div>
       </div>
     </div>
