@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFP / CFP® 報考資格分析工具</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1a1a;--ink2:#4a4a4a;--ink3:#8a8888;
+  --bg:#fafaf8;--bg2:#f2f1ee;--bg3:#e8e6e0;
+  --purple:#534AB7;--purple-light:#EEEDFE;--purple-mid:#AFA9EC;
+  --green:#27500A;--green-light:#EAF3DE;--green-mid:#97C459;
+  --amber:#633806;--amber-light:#FAEEDA;--amber-mid:#FAC775;
+  --red:#791F1F;--red-light:#FCEBEB;--red-mid:#F09595;
+  --gray-light:#F1EFE8;--gray-mid:#B4B2A9;
+  --border:rgba(0,0,0,0.1);
+  --radius:10px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans TC',sans-serif;
+  color:var(--ink);
+  background:var(--bg);
+  min-height:100vh;
+}
+
+/* Top bar */
+.topbar{
+  background:var(--purple);
+  padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:56px;position:sticky;top:0;z-index:100;
+}
+.topbar-title{color:#fff;font-size:14px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:10px}
+.topbar-title svg{opacity:.8}
+.topbar-badge{font-size:10px;background:rgba(255,255,255,.18);color:#fff;padding:3px 9px;border-radius:20px}
+.topbar-link{font-size:11px;color:rgba(255,255,255,.7);text-decoration:none;display:flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid rgba(255,255,255,.25);border-radius:6px;transition:background .15s}
+.topbar-link:hover{background:rgba(255,255,255,.12)}
+
+/* Layout */
+.page{max-width:900px;margin:0 auto;padding:32px 24px 60px}
+
+/* Section label */
+.section-label{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--ink3);text-transform:uppercase;margin-bottom:10px;margin-top:28px}
+
+/* Form card */
+.form-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:28px;
+  margin-bottom:28px;
+  box-shadow:0 1px 4px rgba(0,0,0,.04);
+}
+.form-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.form-title::before{content:'';width:4px;height:20px;background:var(--purple);border-radius:2px;display:inline-block}
+
+.field{margin-bottom:18px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:7px;letter-spacing:.03em}
+.field input[type=text]{
+  width:100%;padding:10px 14px;
+  border:1px solid var(--border);border-radius:9px;
+  font-size:14px;font-family:'Noto Sans TC',sans-serif;
+  background:#fff;color:var(--ink);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.field input[type=text]:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(83,74,183,.12)}
+
+.radio-group,.check-group{display:flex;flex-wrap:wrap;gap:8px}
+.radio-opt,.check-opt{position:relative}
+.radio-opt input,.check-opt input{position:absolute;opacity:0;width:0;height:0}
+.radio-opt label,.check-opt label{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border:1px solid var(--border);border-radius:9px;
+  font-size:13px;cursor:pointer;transition:all .15s;
+  background:#fff;color:var(--ink2);
+  user-select:none;
+}
+.radio-opt label:hover,.check-opt label:hover{border-color:var(--purple-mid);background:var(--purple-light)}
+.radio-opt input:checked+label,.check-opt input:checked+label{
+  background:var(--purple-light);border-color:var(--purple-mid);
+  color:var(--purple);font-weight:600;
+}
+.radio-opt input:disabled+label,.check-opt input:disabled+label{
+  opacity:.3;cursor:not-allowed;background:var(--bg2);
+}
+.check-opt input:checked+label::before{content:'✓';font-size:11px;font-weight:800;color:var(--purple)}
+
+.fpat-link{
+  display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+  font-size:12px;color:var(--purple);text-decoration:none;
+  padding:6px 12px;border:1px solid var(--purple-mid);border-radius:7px;
+  background:var(--purple-light);transition:background .15s;
+}
+.fpat-link:hover{background:var(--purple-mid);color:#fff}
+
+.run-btn{
+  width:100%;padding:13px;
+  background:var(--purple);color:#fff;
+  border:none;border-radius:10px;
+  font-size:14px;font-weight:700;
+  font-family:'Noto Sans TC',sans-serif;
+  cursor:pointer;transition:opacity .2s,transform .1s;
+  letter-spacing:.06em;
+}
+.run-btn:hover{opacity:.88}
+.run-btn:active{opacity:.75;transform:scale(.99)}
+
+/* Report */
+.report{display:block}
+
+.report-header{
+  background:var(--purple);color:#fff;
+  border-radius:16px;padding:22px 26px;margin-bottom:22px;
+  box-shadow:0 2px 8px rgba(83,74,183,.25);
+}
+.report-name{font-size:22px;font-weight:700;margin-bottom:6px}
+.report-meta{font-size:13px;opacity:.78;display:flex;gap:10px;flex-wrap:wrap}
+.meta-pill{background:rgba(255,255,255,.18);border-radius:6px;padding:3px 11px;font-size:12px}
+
+/* Table */
+.tbl-wrap{
+  overflow-x:auto;margin-bottom:22px;
+  border:1px solid var(--border);border-radius:14px;
+  box-shadow:0 1px 4px rgba(0,0,0,.04);
+}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{
+  background:var(--bg2);font-weight:700;font-size:11px;
+  letter-spacing:.05em;padding:11px 14px;text-align:left;
+  border-bottom:1px solid var(--border);color:var(--ink2);
+}
+td{padding:12px 14px;vertical-align:top;border-bottom:1px solid var(--border);line-height:1.6}
+tr:last-child td{border-bottom:none}
+
+.col1-done{background:#edf7e4}
+.col1-undone{background:#f5f5f3}
+.col1-undone *{color:var(--ink3)!important}
+.col2-done{background:#edf7e4}
+.col2-must{}
+.col2-pick{}
+.col2-cfponly{}
+.col2-notneeded{}
+.col2-notneeded *{color:var(--ink3)!important}
+.col4-action{background:#FEF7E2}
+.col4-done{background:#edf7e4}
+.col4-exempt{background:#F0F0FB}
+.col4-none{background:#f5f5f3}
+
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin:2px 2px 2px 0;letter-spacing:.02em}
+.pill-must{background:#534AB7;color:#fff}
+.pill-pick{background:#185FA5;color:#fff}
+.pill-done{background:#3B6D11;color:#fff}
+.pill-cfp{background:#854F0B;color:#fff}
+.pill-no{background:var(--gray-mid);color:#fff}
+.pill-bridge{background:#D85A30;color:#fff}
+
+.nm-name{font-weight:700;color:var(--ink);font-size:13px}
+.nm-sub{font-size:11px;color:var(--ink3);margin-top:2px}
+.exempt-txt{font-size:11px;color:var(--ink2);line-height:1.65}
+.exempt-item{padding:3px 0;border-bottom:1px dashed var(--border)}
+.exempt-item:last-child{border-bottom:none}
+.no-exempt{font-size:11px;color:var(--red);font-weight:600}
+.action-needed{font-size:12px;font-weight:700;color:#791F1F;line-height:1.6}
+.action-done{font-size:12px;color:var(--green);font-weight:600}
+.action-bridge{font-size:12px;font-weight:700;color:#993C1D;line-height:1.5}
+.action-skip{font-size:12px;color:var(--ink3)}
+
+/* Summary */
+.summary-box{border-radius:12px;padding:16px 20px;margin-bottom:12px;border:1px solid}
+.summary-pass{background:var(--green-light);border-color:var(--green-mid)}
+.summary-warn{background:var(--amber-light);border-color:var(--amber-mid)}
+.summary-title{font-size:13px;font-weight:700;margin-bottom:7px}
+.summary-body{font-size:12.5px;line-height:1.75;color:var(--ink2)}
+.summary-body ul{padding-left:18px;margin-top:5px}
+.summary-body li{margin-bottom:3px}
+
+/* Std box */
+.std-box{
+  background:var(--bg2);border-radius:13px;padding:18px 20px;
+  margin-top:10px;border:1px solid var(--border);
+}
+.std-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:8px}
+.std-body{font-size:12px;color:var(--ink2);line-height:1.8}
+.std-body strong{color:var(--ink)}
+
+/* Print */
+.print-btn{
+  margin-top:16px;margin-right:8px;
+  font-size:12px;color:#fff;background:var(--purple);
+  border:none;padding:8px 18px;border-radius:8px;
+  cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-weight:600;
+}
+.print-btn:hover{opacity:.85}
+.reset-btn{
+  margin-top:16px;font-size:12px;color:var(--ink2);
+  background:#fff;border:1px solid var(--border);
+  padding:8px 18px;border-radius:8px;cursor:pointer;
+  font-family:'Noto Sans TC',sans-serif;
+}
+.reset-btn:hover{background:var(--bg2)}
+
+.divider{height:1px;background:var(--border);margin:20px 0}
+
+/* Footer */
+.footer{text-align:center;font-size:11px;color:var(--ink3);padding:24px 0;border-top:1px solid var(--border);margin-top:40px}
+
+@media print{
+  .topbar,.print-btn,.reset-btn,.form-card{display:none!important}
+  .report{display:block!important}
+  body{background:#fff}
+  .page{padding:0}
+}
+@media(max-width:640px){
+  .page{padding:20px 14px 48px}
+  .form-card{padding:20px}
+  th,td{padding:8px 10px;font-size:11.5px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    AFP / CFP® 報考資格分析工具
+    <span class="topbar-badge">新課綱 2026/5</span>
+  </div>
+  <a href="https://www.fpat.org.tw/Login" target="_blank" class="topbar-link">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    FPAT 官網
+  </a>
+</div>
+
+<div class="page">
+
+  <div class="form-card">
+    <div class="form-title">學員資料輸入</div>
+
+    <div class="field">
+      <label>01 &nbsp;學員姓名</label>
+      <input type="text" id="name" placeholder="請輸入學員姓名" oninput="generate()">
+    </div>
+
+    <div class="field">
+      <label>02 &nbsp;學員身分</label>
+      <div class="radio-group">
+        <div class="radio-opt"><input type="radio" name="type" id="t-new" value="new" checked onchange="onTypeChange()"><label for="t-new">全新學員</label></div>
+        <div class="radio-opt"><input type="radio" name="type" id="t-old" value="old" onchange="onTypeChange()"><label for="t-old">舊課綱學員</label></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:7px">
+        <label style="margin-bottom:0">03 &nbsp;舊課綱已完訓模組（可複選）</label>
+        <a href="https://www.fpat.org.tw/Login" target="_blank" style="font-size:11px;color:#0C447C;text-decoration:none;white-space:nowrap;flex-shrink:0" onmouseover="this.style.color='#042C53'" onmouseout="this.style.color='#0C447C'">臺灣理財顧問認證協會 — 登入查詢完訓紀錄 ↗</a>
+      </div>
+      <div class="check-group" id="old-checks">
+        <div class="check-opt"><input type="checkbox" id="om1" value="M1" disabled onchange="generate()"><label for="om1">M1</label></div>
+        <div class="check-opt"><input type="checkbox" id="om2" value="M2" disabled onchange="generate()"><label for="om2">M2</label></div>
+        <div class="check-opt"><input type="checkbox" id="om3" value="M3" disabled onchange="generate()"><label for="om3">M3</label></div>
+        <div class="check-opt"><input type="checkbox" id="om4" value="M4" disabled onchange="generate()"><label for="om4">M4</label></div>
+        <div class="check-opt"><input type="checkbox" id="om5" value="M5" disabled onchange="generate()"><label for="om5">M5</label></div>
+        <div class="check-opt"><input type="checkbox" id="om6" value="M6" disabled onchange="generate()"><label for="om6">M6</label></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>04 &nbsp;考照目標</label>
+      <div class="radio-group">
+        <div class="radio-opt"><input type="radio" name="goal" id="g-afp" value="AFP" checked onchange="onGoalChange()"><label for="g-afp">AFP</label></div>
+        <div class="radio-opt"><input type="radio" name="goal" id="g-cfp" value="CFP" disabled onchange="onGoalChange()"><label for="g-cfp">CFP®</label></div>
+      </div>
+    </div>
+
+    <button class="run-btn" onclick="generate()" style="display:none">產生報考資格分析報告</button>
+    <div style="font-size:12px;color:var(--ink3);text-align:center;padding:6px 0">報告將依據上方資料即時更新</div>
+  </div>
+
+  <div class="report" id="report">
+    <div class="report-header" id="rpt-header"></div>
+    <div class="tbl-wrap"><table id="rpt-table"></table></div>
+    <div id="rpt-summary"></div>
+    <div class="std-box">
+      <div class="std-title">AFP / CFP® 報考標準說明</div>
+      <div class="std-body">
+        <strong>AFP 報考條件：</strong>須完成 NM5（退休規劃）、NM6（稅務規劃）、NM7（財富傳承規劃）三科必修，加上 NM1～NM4 四科中任意 2 科以上選修，合計至少 5 科，方可報名 AFP 綜合科目測驗。每年 3 月及 9 月各舉辦一次。<br><br>
+        <strong>CFP® 報考條件：</strong>在 AFP 條件基礎上，須另外完訓 NM8（綜合理財規劃，40小時，<strong style="color:var(--red)">無任何抵免</strong>），並須先通過 AFP 測驗（成績保留 5 年），始得報考 CFP® 測驗。
+      </div>
+    </div>
+    <div>
+      <button class="print-btn" onclick="window.print()">列印 / 儲存為 PDF</button>
+      <button class="reset-btn" onclick="reset()">重新輸入</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    資料依據：臺灣理財顧問認證協會（FPAT）新版課綱公告（2026年5月起實施）&nbsp;·&nbsp;
+    <a href="https://www.fpat.org.tw" target="_blank" style="color:var(--purple)">fpat.org.tw</a>
+  </div>
+</div>
+
+<script>
+const NM_DATA = [
+  {id:'NM1',name:'基礎理財規劃',sub:'',hours:20,role:'pick',oldMap:'M1',
+   exempt:['理財規劃人員(FPA) + 5年內有效 CM（金融市場常識與職業道德）','⚠ 抵免後仍須補修「理財規劃心理學」4小時銜接課程']},
+  {id:'NM2',name:'財務管理',sub:'',hours:20,role:'pick',oldMap:'M1',
+   exempt:['理財規劃人員(FPA) + 5年內有效 CM','國內財務金融／財務管理系所學士或碩士畢業']},
+  {id:'NM3',name:'風險管理與保險規劃',sub:'',hours:32,role:'pick',oldMap:'M2',
+   exempt:['人身保險業務員(PA) + CM（5年內有效）+ 2年以上保險相關工作經驗（須附在職證明）']},
+  {id:'NM4',name:'投資規劃與資產配置',sub:'',hours:32,role:'pick',oldMap:'M4',
+   exempt:['證券商高級營業員','投信投顧業務員','信託業務員 + 投信投顧相關法規','證券商業務員 + CM + 2年證券工作經驗','財務金融/財務管理系所學士或碩士（5年內）','投資型保險業務員 + 證交法規 + CM + 2年證券工作經驗']},
+  {id:'NM5',name:'退休規劃',sub:'',hours:32,role:'must',oldMap:'M3',
+   exempt:['RFA 退休理財規劃顧問證照（須透過RFA協會系統認列）']},
+  {id:'NM6',name:'稅務規劃',sub:'',hours:32,role:'must',oldMap:'M5',
+   exempt:['財政／財稅系所學士或碩士畢業（5年內）','⚠ 無任何證照抵免途徑，只能以學歷或完訓課程取得']},
+  {id:'NM7',name:'財富傳承規劃',sub:'',hours:32,role:'must',oldMap:'M5',
+   exempt:['法律系所學士或碩士畢業（5年內）','家族信託規劃顧問師證照']},
+  {id:'NM8',name:'綜合理財規劃',sub:'',hours:40,role:'cfp',oldMap:'M6',
+   exempt:['⚠ 無任何抵免，一律須完訓40小時課程']}
+];
+
+const OLD_MAP = {
+  M1:['NM1','NM2'], M2:['NM3'], M3:['NM5'], M4:['NM4'], M5:['NM6','NM7'], M6:['NM8']
+};
+
+const ROWS = [
+  {old:'M1',oldName:'基礎理財規劃',hours:40,nms:['NM1','NM2']},
+  {old:'M2',oldName:'風險管理與保險規劃',hours:40,nms:['NM3']},
+  {old:'M3',oldName:'員工福利與退休金規劃',hours:40,nms:['NM5']},
+  {old:'M4',oldName:'投資規劃',hours:40,nms:['NM4']},
+  {old:'M5',oldName:'租稅與財產移轉規劃',hours:40,nms:['NM6','NM7']},
+  {old:'M6',oldName:'全方位理財規劃',hours:40,nms:['NM8']},
+];
+
+function onTypeChange(){
+  const isOld = document.getElementById('t-old').checked;
+  document.querySelectorAll('#old-checks input[type=checkbox]').forEach(c=>{
+    c.disabled=!isOld;
+    if(!isOld) c.checked=false;
+  });
+  const cfpRadio = document.getElementById('g-cfp');
+  cfpRadio.disabled = !isOld;
+  if(!isOld) document.getElementById('g-afp').checked=true;
+  generate();
+}
+
+function onGoalChange(){ generate(); }
+
+function getOldDone(){
+  return [...document.querySelectorAll('#old-checks input:checked')].map(c=>c.value);
+}
+
+function getMappedNM(oldDone){
+  const s=new Set();
+  oldDone.forEach(m=>{ (OLD_MAP[m]||[]).forEach(n=>s.add(n)); });
+  return s;
+}
+
+function generate(){
+  const name = document.getElementById('name').value.trim() || '（未填寫）';
+  const isOld = document.getElementById('t-old').checked;
+  const goal = document.querySelector('input[name=goal]:checked').value;
+  const oldDone = isOld ? getOldDone() : [];
+  const mappedNM = getMappedNM(oldDone);
+
+  document.getElementById('rpt-header').innerHTML = `
+    <div class="report-name">${name}</div>
+    <div class="report-meta">
+      <span class="meta-pill">${isOld?'舊課綱學員':'全新學員'}</span>
+      <span class="meta-pill">考照目標：${goal}${goal==='CFP'?'®':''}</span>
+      ${isOld&&oldDone.length>0?`<span class="meta-pill">已完訓：${oldDone.join('、')}</span>`:''}
+    </div>
+  `;
+
+  const bridgeList = [];
+  const pickDone = ['NM1','NM2','NM3','NM4'].filter(m=>mappedNM.has(m));
+  const pickMet = pickDone.length >= 2;
+  let html = `<thead><tr>
+    <th style="width:15%">舊課綱模組</th>
+    <th style="width:26%">新課綱對應模組</th>
+    <th style="width:31%">抵免標準</th>
+    <th style="width:28%">需補修情況</th>
+  </tr></thead><tbody>`;
+
+  ROWS.forEach(row => {
+    const oldCompleted = isOld && oldDone.includes(row.old);
+    const nmCount = row.nms.length;
+
+    row.nms.forEach((nmId, idx) => {
+      const nm = NM_DATA.find(n=>n.id===nmId);
+      const nmDone = mappedNM.has(nmId);
+      const isAfpMust = nm.role==='must';
+      const isAfpPick = nm.role==='pick';
+      const isCfpOnly = nm.role==='cfp';
+
+      // Bridge
+      let bridgeNote = '';
+      if(isOld && oldCompleted){
+        if(nmId==='NM1'){
+          bridgeNote = `<div style="margin-top:5px"><span class="pill pill-bridge">銜接課程</span><span style="font-size:10px;color:#993C1D"> 理財規劃心理學 4h</span></div>`;
+          if(!bridgeList.includes('NM1「理財規劃心理學」4小時銜接課程')) bridgeList.push('NM1「理財規劃心理學」4小時銜接課程');
+        }
+        if(nmId==='NM8'){
+          bridgeNote = `<div style="margin-top:5px"><span class="pill pill-bridge">銜接課程</span><span style="font-size:10px;color:#993C1D"> 綜合實務案例12h＋理財規劃書制定12h</span></div>`;
+          if(!bridgeList.includes('NM8 銜接課程（綜合實務案例12h＋理財規劃書制定12h）')) bridgeList.push('NM8 銜接課程（綜合實務案例12h＋理財規劃書制定12h）');
+        }
+      }
+
+      // Col1
+      let col1Class = oldCompleted ? 'col1-done' : 'col1-undone';
+      let col1Content = '';
+      if(idx===0){
+        col1Content = `
+          <div style="font-weight:${oldCompleted?'700':'400'};font-size:13px">${row.old}</div>
+          <div style="font-size:11px;margin-top:2px">${row.oldName}</div>
+          ${!isOld
+            ? '<div style="font-size:10px;margin-top:4px;color:var(--ink3)">新學員</div>'
+            : oldCompleted
+              ? '<div style="display:inline-block;font-size:10px;padding:2px 7px;background:#3B6D11;color:#fff;border-radius:4px;margin-top:5px">已完訓</div>'
+              : '<div style="font-size:10px;margin-top:4px;color:var(--ink3)">未完訓</div>'}
+        `;
+      }
+
+      // Col2
+      let col2Class, col2Pill;
+      const rolePill = isAfpMust ? `<span class="pill pill-must">必修</span>`
+        : isAfpPick ? `<span class="pill pill-pick">選修</span>`
+        : (isCfpOnly && goal==='CFP') ? `<span class="pill pill-cfp">CFP®必修</span>`
+        : `<span class="pill pill-no">AFP不需修</span>`;
+      col2Class = nmDone ? 'col2-done' : isAfpMust ? 'col2-must' : isAfpPick ? 'col2-pick' : (isCfpOnly && goal==='CFP') ? 'col2-cfponly' : 'col2-notneeded';
+      col2Pill = rolePill;
+
+      // Col3
+      let col3Content = '';
+      if(nm.exempt.length>0){
+        col3Content = `<div class="exempt-txt">${nm.exempt.map(e=>`<div class="exempt-item">${e.startsWith('⚠')?`<span style="color:var(--red);font-weight:600">${e}</span>`:e}</div>`).join('')}</div>`;
+      } else {
+        col3Content = `<span class="no-exempt">無抵免途徑</span>`;
+      }
+
+      // Col4
+      let col4Class, col4Content;
+      if(nmDone){
+        if(bridgeNote){
+          col4Class='col4-action';
+          col4Content=`<span class="pill pill-done">已完訓</span><div class="action-bridge" style="margin-top:6px">需補修銜接課程${nmId==='NM8'?'（24小時）':'（4小時）'}</div>${bridgeNote}`;
+        } else {
+          col4Class='col4-done';
+          col4Content=`<span class="pill pill-done">已完訓</span><div class="action-done" style="margin-top:4px">✓ 無需補修</div>`;
+        }
+      } else if(isCfpOnly && goal==='AFP'){
+        col4Class='col4-none';
+        col4Content=`<div class="action-skip">AFP 目標無需修習</div>`;
+      } else if(isAfpMust){
+        col4Class='col4-action';
+        col4Content=`<div class="action-needed">必修，缺一不可</div>`;
+      } else if(isAfpPick){
+        if(pickMet){
+          col4Class='col4-none';
+          col4Content=`<div style="font-size:12px;color:#5F5E5A">選修學分已達標，此模組可視需求修習</div>`;
+        } else {
+          col4Class='col4-action';
+          col4Content=`<div class="action-needed">選修，NM1~NM4 需選滿 2 科</div>`;
+        }
+      } else if(isCfpOnly && goal==='CFP'){
+        col4Class='col4-action';
+        col4Content=`<div class="action-needed">CFP®必修，無任何抵免</div>`;
+      } else {
+        col4Class='col4-exempt';
+        col4Content=`<div style="font-size:12px;color:var(--purple)">可申請抵免</div>`;
+      }
+
+      if(idx===0){
+        html+=`<tr>
+          <td class="${col1Class}" rowspan="${nmCount}" style="border-right:1px solid var(--border)">${col1Content}</td>
+          <td class="${col2Class}"><div class="nm-name">${nm.id} ${nm.name}</div>${nm.sub?`<div class="nm-sub">${nm.sub}</div>`:''}<div style="margin-top:4px">${col2Pill}</div>${bridgeNote}</td>
+          <td>${col3Content}</td>
+          <td class="${col4Class}">${col4Content}</td>
+        </tr>`;
+      } else {
+        html+=`<tr>
+          <td class="${col2Class}"><div class="nm-name">${nm.id} ${nm.name}</div>${nm.sub?`<div class="nm-sub">${nm.sub}</div>`:''}<div style="margin-top:4px">${col2Pill}</div>${bridgeNote}</td>
+          <td>${col3Content}</td>
+          <td class="${col4Class}">${col4Content}</td>
+        </tr>`;
+      }
+    });
+  });
+
+  html += '</tbody>';
+  document.getElementById('rpt-table').innerHTML = html;
+
+  // Summary
+  const hasMust = ['NM5','NM6','NM7'].every(m=>mappedNM.has(m));
+  const totalCount = [...mappedNM].filter(m=>m!=='NM8').length;
+  const afpOk = hasMust && pickDone.length>=2;
+  const cfpCourseOk = afpOk && mappedNM.has('NM8');
+
+  let sumHtml='';
+
+  if(bridgeList.length>0){
+    sumHtml+=`<div class="summary-box" style="background:var(--red-light);border-color:var(--red-mid)">
+      <div class="summary-title" style="color:var(--red)">舊課綱學員：必須先完成以下銜接課程才能報考</div>
+      <div class="summary-body"><ul>${bridgeList.map(b=>`<li>${b}</li>`).join('')}</ul></div>
+    </div>`;
+  }
+
+  if(afpOk){
+    sumHtml+=`<div class="summary-box summary-pass">
+      <div class="summary-title" style="color:var(--green)">AFP 課程條件：達標</div>
+      <div class="summary-body">必修三科（NM5/NM6/NM7）及選修（${pickDone.join('、')}）均已完成，可報名 AFP 綜合科目測驗。${bridgeList.length>0?'<br><strong>注意：</strong>報考前須先完成上方銜接課程。':''}
+      </div>
+    </div>`;
+  } else {
+    const mustMissing=['NM5','NM6','NM7'].filter(m=>!mappedNM.has(m));
+    const pickNeed=Math.max(0,2-pickDone.length);
+    sumHtml+=`<div class="summary-box summary-warn">
+      <div class="summary-title" style="color:var(--amber)">AFP 課程條件：尚未達標，需補修以下科目</div>
+      <div class="summary-body"><ul>
+        ${mustMissing.map(m=>{const nm=NM_DATA.find(n=>n.id===m);return`<li>${nm.id} ${nm.name}（必修）</li>`}).join('')}
+        ${pickNeed>0?`<li>NM1～NM4 中再選修 ${pickNeed} 科（目前已對應 ${pickDone.length} 科：${pickDone.length>0?pickDone.join('、'):'無'}）</li>`:''}
+      </ul></div>
+    </div>`;
+  }
+
+  if(goal==='CFP'){
+    if(cfpCourseOk){
+      sumHtml+=`<div class="summary-box summary-pass">
+        <div class="summary-title" style="color:var(--green)">CFP® 課程條件：達標</div>
+        <div class="summary-body">NM1–NM8 均已完成，通過 AFP 測驗後即可申請報考 CFP® 測驗（NM8 綜合理財規劃科目）。</div>
+      </div>`;
+    } else {
+      sumHtml+=`<div class="summary-box summary-warn">
+        <div class="summary-title" style="color:var(--amber)">CFP® 課程條件：${afpOk?'尚需完成 NM8':'AFP 條件尚未達標'}</div>
+        <div class="summary-body">${afpOk
+          ?'AFP 條件已達，尚須完訓 <strong>NM8 綜合理財規劃（40小時）</strong>，此科無任何抵免途徑，須全程上課。完成後通過 AFP 測驗即可報考 CFP®。'
+          :'請先滿足 AFP 報考條件，再追加完訓 NM8（40小時，無抵免），通過 AFP 測驗後方可報考 CFP®。'}
+        </div>
+      </div>`;
+    }
+  }
+
+  document.getElementById('rpt-summary').innerHTML = sumHtml;
+}
+
+function reset(){
+  document.getElementById('name').value='';
+  document.getElementById('t-new').checked=true;
+  document.getElementById('g-afp').checked=true;
+  document.querySelectorAll('#old-checks input').forEach(c=>{c.checked=false;c.disabled=true});
+  document.getElementById('g-cfp').disabled=true;
+  generate();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+generate();
+</script>
+</body>
+</html>
