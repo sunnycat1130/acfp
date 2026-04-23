@@ -317,11 +317,11 @@ function generate(){
       let bridgeNote='';
       if(isOld&&oldCompleted){
         if(nmId==='NM1'){
-          bridgeNote='<div style="margin-top:4px"><span class="pill pill-bridge">銜接課程</span><span style="font-size:9.5px;color:#993C1D"> 理財規劃心理學 4h</span></div>';
+          bridgeNote='<div style="margin-top:4px"><span class="pill pill-bridge">需補修</span> <span class="action-bridge">銜接課程—理財規劃心理學（4小時）</span></div>';
           if(bridgeList.indexOf('NM1「理財規劃心理學」4小時銜接課程')<0)bridgeList.push('NM1「理財規劃心理學」4小時銜接課程');
         }
         if(nmId==='NM8'){
-          bridgeNote='<div style="margin-top:4px"><span class="pill pill-bridge">銜接課程</span><span style="font-size:9.5px;color:#993C1D"> 綜合實務案例12h＋理財規劃書制定12h</span></div>';
+          bridgeNote='<div style="margin-top:4px"><span class="pill pill-bridge">需補修</span> <span class="action-bridge">銜接課程—綜合實務案例12h＋理財規劃書制定12h（24小時）</span></div>';
           if(bridgeList.indexOf('NM8 銜接課程（綜合實務案例12h＋理財規劃書制定12h）')<0)bridgeList.push('NM8 銜接課程（綜合實務案例12h＋理財規劃書制定12h）');
         }
       }
@@ -357,7 +357,7 @@ function generate(){
       if(nmDone){
         if(bridgeNote){
           col4Class='col4-action';
-          col4Content='<div class="action-bridge"><span class="pill pill-bridge">需補修</span> 銜接課程'+(nmId==='NM8'?'（24小時）':'（4小時）')+'</div>'+bridgeNote;
+          col4Content='<div class="action-bridge"><span class="pill pill-bridge">需補修</span> 銜接課程'+(nmId==='NM8'?'—綜合實務案例12h＋理財規劃書制定12h（24小時）':'—理財規劃心理學（4小時）')+'</div>';
         }else{
           col4Class='col4-done';
           col4Content='<div class="action-done"><span class="pill pill-done">已完訓</span> ✓ 無需補修</div>';
@@ -365,12 +365,12 @@ function generate(){
       }else if(isCfpOnly&&goal==='AFP'){
         col4Class='col4-none';col4Content='<div class="action-skip">AFP 目標無需修習</div>';
       }else if(isAfpMust){
-        col4Class='col4-action';col4Content='<div class="action-needed">必修，缺一不可</div>';
+        col4Class='col4-action';col4Content='<div class="action-needed"><span class="pill" style="background:#A32D2D;color:#fff;">必修</span> 缺一不可</div>';
       }else if(isAfpPick){
         if(pickMet){
           col4Class='col4-none';col4Content='<div style="font-size:11px;color:#5F5E5A">選修已達標，可視需求修習</div>';
         }else{
-          col4Class='col4-action';col4Content='<div class="action-needed">選修，NM1~NM4 需選滿 2 科</div>';
+          col4Class='col4-action';col4Content='<div class="action-needed"><span class="pill pill-bridge">選修</span> NM1~NM4 需選滿 2 科</div>';
         }
       }else if(isCfpOnly&&goal==='CFP'){
         col4Class='col4-action';col4Content='<div class="action-needed">CFP®必修，無任何抵免</div>';
@@ -381,12 +381,12 @@ function generate(){
       if(idx===0){
         html+='<tr>'+
           '<td class="'+col1Class+'" rowspan="'+nmCount+'" style="border-right:1px solid var(--border)">'+col1Content+'</td>'+
-          '<td class="'+col2Class+'"><div class="nm-name">'+rolePill+' '+nm.id+' '+nm.name+'</div>'+bridgeNote+'</td>'+
+          '<td class="'+col2Class+'"><div class="nm-name">'+rolePill+' '+nm.id+' '+nm.name+'</div></td>'+
           '<td class="'+col4Class+'">'+col4Content+'</td>'+
           '</tr>';
       }else{
         html+='<tr>'+
-          '<td class="'+col2Class+'"><div class="nm-name">'+rolePill+' '+nm.id+' '+nm.name+'</div>'+bridgeNote+'</td>'+
+          '<td class="'+col2Class+'"><div class="nm-name">'+rolePill+' '+nm.id+' '+nm.name+'</div></td>'+
           '<td class="'+col4Class+'">'+col4Content+'</td>'+
           '</tr>';
       }
