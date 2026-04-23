@@ -283,23 +283,25 @@ function generate(){
   const mappedNM=getMappedNM(oldDone);
 
   document.getElementById('rpt-header').innerHTML=
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">'+
     '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'+
     '<div class="report-name">'+(name?name+'&nbsp;':'')+'學員</div>'+
     '<div class="report-meta">'+
     '<span class="meta-pill">'+(isOld?'舊課綱學員':'全新學員')+'</span>'+
     '<span class="meta-pill">考照目標：'+goal+(goal==='CFP'?'®':'')+'</span>'+
     (isOld&&oldDone.length>0?'<span class="meta-pill">已完訓：'+oldDone.join('、')+'</span>':'')+
-    '</div></div>';
+    '</div></div>'+
+    '<a href="https://www.fpat.org.tw/Message/Detail/4ce1844d-8924-4136-9419-27840cf8da79" target="_blank" style="font-size:11px;color:#fff;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:4px 10px;text-decoration:none;white-space:nowrap;flex-shrink:0;">課程抵免資訊 ↗</a>'+
+    '</div>';
 
   const bridgeList=[];
   const pickDone=['NM1','NM2','NM3','NM4'].filter(m=>mappedNM.has(m));
   const pickMet=pickDone.length>=2;
 
   let html='<thead><tr>'+
-    '<th style="width:15%">舊課綱模組</th>'+
-    '<th style="width:30%">新課綱對應模組</th>'+
-    '<th style="width:45%">需補修情況</th>'+
-    '<th style="width:10%">抵免資訊</th>'+
+    '<th style="width:18%">舊課綱模組</th>'+
+    '<th style="width:35%">新課綱對應模組</th>'+
+    '<th style="width:47%">需補修情況</th>'+
     '</tr></thead><tbody>';
 
   ROWS.forEach(function(row){
@@ -380,15 +382,13 @@ function generate(){
       if(idx===0){
         html+='<tr>'+
           '<td class="'+col1Class+'" rowspan="'+nmCount+'" style="border-right:1px solid var(--border)">'+col1Content+'</td>'+
-          '<td class="'+col2Class+'"><div class="nm-name">'+nm.id+' '+nm.name+'</div><div style="margin-top:3px">'+rolePill+'</div>'+bridgeNote+'</td>'+
+          '<td class="'+col2Class+'"><div class="nm-name">'+rolePill+' '+nm.id+' '+nm.name+'</div>'+bridgeNote+'</td>'+
           '<td class="'+col4Class+'">'+col4Content+'</td>'+
-          '<td style="text-align:center;vertical-align:middle">'+col3Content+'</td>'+
           '</tr>';
       }else{
         html+='<tr>'+
-          '<td class="'+col2Class+'"><div class="nm-name">'+nm.id+' '+nm.name+'</div><div style="margin-top:3px">'+rolePill+'</div>'+bridgeNote+'</td>'+
+          '<td class="'+col2Class+'"><div class="nm-name">'+rolePill+' '+nm.id+' '+nm.name+'</div>'+bridgeNote+'</td>'+
           '<td class="'+col4Class+'">'+col4Content+'</td>'+
-          '<td style="text-align:center;vertical-align:middle">'+col3Content+'</td>'+
           '</tr>';
       }
     });
