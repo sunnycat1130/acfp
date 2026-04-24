@@ -92,20 +92,17 @@ tr:last-child td{border-bottom:none;}
 .action-bridge{font-size:11px;font-weight:700;color:#993C1D;line-height:1.4;}
 .action-skip{font-size:11px;color:var(--ink3);}
 
-/* Bottom */
-.bottom-strip{flex-shrink:0;display:flex;flex-direction:column;gap:5px;}
-.summary-area{display:flex;flex-direction:column;gap:4px;}
-.summary-box{border-radius:8px;padding:5px 10px;border:1px solid;}
-.summary-pass{background:var(--green-light);border-color:var(--green-mid);}
-.summary-warn{background:var(--amber-light);border-color:var(--amber-mid);}
-.summary-bridge{background:var(--red-light);border-color:var(--red-mid);}
-.summary-title{font-size:11px;font-weight:700;margin-bottom:2px;}
-.summary-body{font-size:10.5px;line-height:1.55;color:var(--ink2);}
-.summary-body ul{padding-left:14px;margin-top:2px;}
-.summary-body li{margin-bottom:1px;}
-.std-box{background:#f0efec;border-radius:8px;padding:6px 12px;border:1px solid var(--border);}
-.std-body{font-size:10px;color:var(--ink2);line-height:1.65;}
-.std-body strong{color:var(--ink);}
+/* Status block - fixed single area */
+.status-block{flex-shrink:0;border-radius:9px;padding:9px 14px;border:1px solid;min-height:58px;display:flex;flex-direction:column;justify-content:center;}
+.status-block.s-info{background:#EBF4FD;border-color:#7BBDE0;}
+.status-block.s-warn{background:var(--amber-light);border-color:var(--amber-mid);}
+.status-block.s-pass{background:var(--green-light);border-color:var(--green-mid);}
+.status-block.s-bridge{background:var(--red-light);border-color:var(--red-mid);}
+.s-title{font-size:11.5px;font-weight:700;margin-bottom:3px;}
+.s-body{font-size:10.5px;line-height:1.6;color:var(--ink2);}
+.s-body ul{padding-left:14px;margin-top:2px;}
+.s-body li{margin-bottom:1px;}
+.s-body strong{color:var(--ink);}
 
 /* Exempt button */
 .exempt-btn{font-size:10px;font-weight:500;color:#5F5E5A;background:#f0efec;border:1px solid var(--gray-mid);border-radius:4px;padding:2px 8px;cursor:pointer;white-space:nowrap;font-family:'Noto Sans TC',sans-serif;}
@@ -153,7 +150,7 @@ tr:last-child td{border-bottom:none;}
         <div class="field">
           <div class="field-label">02 &nbsp;學員身分</div>
           <div class="radio-group">
-            <div class="radio-opt"><input type="radio" name="type" id="t-new" value="new" checked onchange="onTypeChange()"><label for="t-new">全新學員</label></div>
+            <div class="radio-opt"><input type="radio" name="type" id="t-new" value="new" onchange="onTypeChange()"><label for="t-new">全新學員</label></div>
             <div class="radio-opt"><input type="radio" name="type" id="t-old" value="old" onchange="onTypeChange()"><label for="t-old">舊課綱學員</label></div>
           </div>
         </div>
@@ -174,7 +171,7 @@ tr:last-child td{border-bottom:none;}
         <div class="field">
           <div class="field-label">04 &nbsp;考照目標</div>
           <div class="radio-group">
-            <div class="radio-opt"><input type="radio" name="goal" id="g-afp" value="AFP" checked onchange="onGoalChange()"><label for="g-afp">AFP</label></div>
+            <div class="radio-opt"><input type="radio" name="goal" id="g-afp" value="AFP" onchange="onGoalChange()"><label for="g-afp">AFP</label></div>
             <div class="radio-opt"><input type="radio" name="goal" id="g-cfp" value="CFP" disabled onchange="onGoalChange()"><label for="g-cfp">CFP®</label></div>
           </div>
         </div>
@@ -198,15 +195,7 @@ tr:last-child td{border-bottom:none;}
         <table id="rpt-table"></table>
       </div>
 
-      <div class="bottom-strip">
-        <div class="summary-area" id="rpt-summary"></div>
-        <div class="std-box">
-          <div class="std-body">
-            <strong>AFP 報考條件：</strong>須完成 NM5、NM6、NM7 三科必修，加上 NM1～NM4 中任意 2 科以上選修，合計至少 5 科，方可報名。<br>
-            <strong>CFP 報考條件：</strong>在 AFP 條件基礎上，須另外完訓 NM8（40小時，無任何抵免），並須先通過 AFP 測驗（成績保留 5 年），始得報考 CFP 測驗。
-          </div>
-        </div>
-      </div>
+      <div class="status-block" id="rpt-summary"></div>
     </div>
 
   </div>
@@ -255,7 +244,8 @@ function onTypeChange(){
   const isOld=document.getElementById('t-old').checked;
   document.querySelectorAll('#old-checks input[type=checkbox]').forEach(c=>{c.disabled=!isOld;if(!isOld)c.checked=false;});
   document.getElementById('g-cfp').disabled=!isOld;
-  if(!isOld)document.getElementById('g-afp').checked=true;
+  const goalSel=document.querySelector('input[name=goal]:checked');
+  if(!isOld&&goalSel&&goalSel.value==='CFP') document.getElementById('g-afp').checked=true;
   generate();
 }
 function onGoalChange(){generate();}
@@ -276,9 +266,27 @@ function closeModal(e){
 }
 
 function generate(){
+  const typeSelected=document.querySelector('input[name=type]:checked');
+  const goalSelected=document.querySelector('input[name=goal]:checked');
+  const el=document.getElementById('rpt-summary');
+
+  if(!typeSelected||!goalSelected){
+    document.getElementById('rpt-header').innerHTML=
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">'+
+      '<div style="display:flex;align-items:center;gap:10px;">'+
+      '<div class="report-name">學員</div>'+
+      '<div class="report-meta"><span class="meta-pill" style="opacity:.5">請選擇學員身分與考照目標</span></div>'+
+      '</div></div>';
+    document.getElementById('rpt-table').innerHTML='';
+    el.className='status-block s-info';
+    el.innerHTML='<div class="s-title" style="color:#0C447C">請先選擇左方的學員身分與考照目標</div>'+
+      '<div class="s-body">完成選擇後，系統將自動產生新舊課綱對照表，並顯示報考資格分析。</div>';
+    return;
+  }
+
   const name=document.getElementById('name').value.trim();
-  const isOld=document.getElementById('t-old').checked;
-  const goal=document.querySelector('input[name=goal]:checked').value;
+  const isOld=typeSelected.value==='old';
+  const goal=goalSelected.value;
   const oldDone=isOld?getOldDone():[];
   const mappedNM=getMappedNM(oldDone);
 
@@ -399,42 +407,75 @@ function generate(){
   const hasMust=['NM5','NM6','NM7'].every(function(m){return mappedNM.has(m);});
   const afpOk=hasMust&&pickMet;
   const cfpCourseOk=afpOk&&mappedNM.has('NM8');
-  let sumHtml='';
+  const el=document.getElementById('rpt-summary');
 
-  if(bridgeList.length>0){
-    sumHtml+='<div class="summary-box summary-bridge">'+
-      '<div class="summary-title" style="color:var(--red)">須先完成以下銜接課程才能報考</div>'+
-      '<div class="summary-body"><ul>'+bridgeList.map(function(b){return'<li>'+b+'</li>';}).join('')+'</ul></div>'+
-      '</div>';
-  }
-  if(afpOk){
-    sumHtml+='<div class="summary-box summary-pass">'+
-      '<div class="summary-title" style="color:var(--green)">AFP 課程條件：達標</div>'+
-      '<div class="summary-body">必修（NM5/NM6/NM7）及選修（'+pickDone.join('、')+'）均已完成，可報名 AFP 測驗。'+(bridgeList.length>0?'<br><strong>注意：</strong>報考前須先完成上方銜接課程。':'')+'</div>'+
-      '</div>';
-  }
-  if(goal==='CFP'){
-    if(cfpCourseOk){
-      sumHtml+='<div class="summary-box summary-pass">'+
-        '<div class="summary-title" style="color:var(--green)">CFP® 課程條件：達標</div>'+
-        '<div class="summary-body">NM1–NM8 均已完成，通過 AFP 測驗後即可申請報考 CFP® 測驗。</div>'+
-        '</div>';
+  // Determine missing items for old students
+  const mustMissing=['NM5','NM6','NM7'].filter(function(m){return!mappedNM.has(m);});
+  const pickNeed=Math.max(0,2-pickDone.length);
+
+  if(!isOld){
+    // 全新學員
+    if(afpOk){
+      el.className='status-block s-pass';
+      el.innerHTML='<div class="s-title" style="color:var(--green)">AFP 課程條件：達標</div>'+
+        '<div class="s-body">必修（NM5/NM6/NM7）及選修（'+pickDone.join('、')+'）均已完成，可報名 AFP 綜合科目測驗。</div>';
     }else{
-      sumHtml+='<div class="summary-box summary-warn">'+
-        '<div class="summary-title" style="color:var(--amber)">CFP® 課程條件：'+(afpOk?'尚需完成 NM8':'AFP 條件尚未達標')+'</div>'+
-        '<div class="summary-body">'+(afpOk
-          ?'AFP 條件已達，尚須完訓 <strong>NM8（40小時）</strong>，無任何抵免，須全程上課。完成後通過 AFP 測驗即可報考 CFP®。'
-          :'請先滿足 AFP 報考條件，再追加完訓 NM8（40小時，無抵免），通過 AFP 測驗後方可報考 CFP®。')+
-        '</div></div>';
+      el.className='status-block s-info';
+      el.innerHTML='<div class="s-title" style="color:#0C447C">AFP 報考條件說明</div>'+
+        '<div class="s-body">須完成 <strong>NM5（退休規劃）、NM6（稅務規劃）、NM7（財富傳承規劃）</strong> 三科必修，'+
+        '加上 <strong>NM1～NM4 中任意 2 科以上</strong>選修，合計至少 5 科，方可報名 AFP 綜合科目測驗。</div>';
+    }
+  }else{
+    // 舊課綱學員
+    if(goal==='AFP'){
+      if(afpOk&&bridgeList.length===0){
+        el.className='status-block s-pass';
+        el.innerHTML='<div class="s-title" style="color:var(--green)">AFP 課程條件：達標</div>'+
+          '<div class="s-body">必修（NM5/NM6/NM7）及選修（'+pickDone.join('、')+'）均已完成，可報名 AFP 綜合科目測驗。</div>';
+      }else{
+        el.className='status-block s-warn';
+        let items=[];
+        if(bridgeList.length>0) bridgeList.forEach(function(b){items.push('銜接課程：'+b);});
+        mustMissing.forEach(function(m){
+          var nm=NM_DATA.find(function(n){return n.id===m;});
+          items.push('必修尚缺：'+nm.id+' '+nm.name);
+        });
+        if(pickNeed>0) items.push('選修尚缺 '+pickNeed+' 科（NM1～NM4 中任選）');
+        el.innerHTML='<div class="s-title" style="color:var(--amber)">尚有以下條件未完成，請補修後再報考</div>'+
+          '<div class="s-body"><ul>'+items.map(function(i){return'<li>'+i+'</li>';}).join('')+'</ul></div>';
+      }
+    }else{
+      // CFP目標
+      if(cfpCourseOk&&bridgeList.length===0){
+        el.className='status-block s-pass';
+        el.innerHTML='<div class="s-title" style="color:var(--green)">CFP® 課程條件：達標</div>'+
+          '<div class="s-body">NM1–NM8 均已完成，通過 AFP 測驗後即可申請報考 CFP® 測驗。</div>';
+      }else if(afpOk&&bridgeList.length===0){
+        el.className='status-block s-pass';
+        el.innerHTML='<div class="s-title" style="color:var(--green)">AFP 課程條件：達標</div>'+
+          '<div class="s-body">必修（NM5/NM6/NM7）及選修（'+pickDone.join('、')+'）均已完成，可報名 AFP 測驗。'+
+          '<br>CFP® 尚須完訓 <strong>NM8 綜合理財規劃（40小時，無任何抵免）</strong>，完成後通過 AFP 測驗即可報考 CFP®。</div>';
+      }else{
+        el.className='status-block s-warn';
+        let items=[];
+        if(bridgeList.length>0) bridgeList.forEach(function(b){items.push('銜接課程：'+b);});
+        mustMissing.forEach(function(m){
+          var nm=NM_DATA.find(function(n){return n.id===m;});
+          items.push('必修尚缺：'+nm.id+' '+nm.name);
+        });
+        if(pickNeed>0) items.push('選修尚缺 '+pickNeed+' 科（NM1～NM4 中任選）');
+        if(!mappedNM.has('NM8')) items.push('CFP®必修尚缺：NM8 綜合理財規劃（40小時，無任何抵免）');
+        el.innerHTML='<div class="s-title" style="color:var(--amber)">尚有以下條件未完成，請補修後再報考</div>'+
+          '<div class="s-body"><ul>'+items.map(function(i){return'<li>'+i+'</li>';}).join('')+'</ul></div>';
+      }
     }
   }
-  document.getElementById('rpt-summary').innerHTML=sumHtml;
 }
 
 function reset(){
   document.getElementById('name').value='';
-  document.getElementById('t-new').checked=true;
-  document.getElementById('g-afp').checked=true;
+  document.querySelectorAll('input[name=type]').forEach(function(r){r.checked=false;});
+  document.querySelectorAll('input[name=goal]').forEach(function(r){r.checked=false;});
   document.querySelectorAll('#old-checks input').forEach(function(c){c.checked=false;c.disabled=true;});
   document.getElementById('g-cfp').disabled=true;
   generate();
