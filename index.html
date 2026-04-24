@@ -425,7 +425,7 @@ function generate(){
           var nm=NM_DATA.find(function(n){return n.id===m;});
           items.push('必修尚缺：'+nm.id+' '+nm.name);
         });
-        if(pickNeed>0) items.push('選修尚缺 '+pickNeed+' 科（NM1～NM4 中任選）');
+        if(pickNeed>0) items.push('選修尚缺 '+pickNeed+' 科（NM1～NM4 中任選，目前已對應 '+pickDone.length+' 科'+(pickDone.length>0?'：'+pickDone.join('、'):'')+'）');
         statusEl.innerHTML='<div class="s-title" style="color:var(--amber)">尚有以下條件未完成，請補修後再報考</div>'+
           '<div class="s-body"><ul>'+items.map(function(i){return'<li>'+i+'</li>';}).join('')+'</ul></div>';
       }
@@ -446,9 +446,9 @@ function generate(){
         bridgeList.forEach(function(b){items2.push('銜接課程：'+b);});
         mustMissing.forEach(function(m){
           var nm=NM_DATA.find(function(n){return n.id===m;});
-          items2.push('必修尚缺：'+nm.id+' '+nm.name);
+          items2.push('AFP必修尚缺：'+nm.id+' '+nm.name);
         });
-        if(pickNeed>0) items2.push('選修尚缺 '+pickNeed+' 科（NM1～NM4 中任選）');
+        if(pickNeed>0) items2.push('AFP選修尚缺 '+pickNeed+' 科（NM1～NM4 中任選，目前已對應 '+pickDone.length+' 科'+(pickDone.length>0?'：'+pickDone.join('、'):'')+'）');
         if(!mappedNM.has('NM8')) items2.push('CFP®必修尚缺：NM8 綜合理財規劃（40小時，無任何抵免）');
         statusEl.innerHTML='<div class="s-title" style="color:var(--amber)">尚有以下條件未完成，請補修後再報考</div>'+
           '<div class="s-body"><ul>'+items2.map(function(i){return'<li>'+i+'</li>';}).join('')+'</ul></div>';
