@@ -457,7 +457,7 @@ function generate(){
           items2.push('NM1～NM4 尚缺（CFP® 需全部完訓）：'+pickMissing.join('、'));
         }
         if(!mappedNM.has('NM8')) items2.push('CFP®必修尚缺：NM8 綜合理財規劃（40小時，無任何抵免）');
-        items2.push('完成以上課程後，須先<strong>通過 AFP 測驗</strong>，方可報考 CFP®');
+        items2.push('⚠ 提醒：須先通過 AFP 測驗，方可報考 CFP®');
         statusEl.innerHTML='<div class="s-title" style="color:var(--amber)">尚有以下條件未完成，請補修後再報考</div>'+
           '<div class="s-body"><ul>'+items2.map(function(i){return'<li>'+i+'</li>';}).join('')+'</ul></div>';
       }
