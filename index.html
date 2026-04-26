@@ -362,7 +362,10 @@ function generate(){
       }else if(isAfpMust){
         col4Content='<div class="action-needed"><span class="pill" style="background:#A32D2D;color:#fff;">必修</span> 缺一不可</div>';
       }else if(isAfpPick){
-        if(pickMet){
+        if(goal==='CFP'){
+          // CFP requires all NM1-NM8, so all pick modules must be completed
+          col4Content='<div class="action-needed"><span class="pill" style="background:#A32D2D;color:#fff;">必修</span> CFP® 需完成 NM1–NM8 全部</div>';
+        }else if(pickMet){
           col4Content='<div style="font-size:11px;color:#5F5E5A">選修已達標，可視需求修習</div>';
         }else{
           col4Content='<div class="action-needed"><span class="pill pill-bridge">選修</span> NM1~NM4 需選滿 2 科</div>';
@@ -434,12 +437,12 @@ function generate(){
       if(cfpOk&&bridgeList.length===0){
         statusEl.className='status-block s-pass';
         statusEl.innerHTML='<div class="s-title" style="color:var(--green)">CFP® 課程條件：達標</div>'+
-          '<div class="s-body">NM1–NM8 均已完成，通過 AFP 測驗後即可申請報考 CFP® 測驗。</div>';
+          '<div class="s-body">NM1–NM8 均已完成。須先通過 <strong>AFP 測驗</strong>（成績保留 5 年），通過後即可申請報考 CFP® 測驗。</div>';
       }else if(afpOk&&!mappedNM.has('NM8')&&bridgeList.length===0){
         statusEl.className='status-block s-pass';
         statusEl.innerHTML='<div class="s-title" style="color:var(--green)">AFP 課程條件：達標</div>'+
           '<div class="s-body">必修（NM5/NM6/NM7）及選修（'+pickDone.join('、')+'）均已完成，可報名 AFP 測驗。'+
-          '<br>CFP® 尚須完訓 <strong>NM8 綜合理財規劃（40小時，無任何抵免）</strong>，完成後通過 AFP 測驗即可報考 CFP®。</div>';
+          '<br>CFP® 尚須完訓 <strong>NM8 綜合理財規劃（40小時，無任何抵免）</strong>，並須先<strong>通過 AFP 測驗</strong>，完成後方可報考 CFP®。</div>';
       }else{
         statusEl.className='status-block s-warn';
         var items2=[];
@@ -448,8 +451,13 @@ function generate(){
           var nm=NM_DATA.find(function(n){return n.id===m;});
           items2.push('AFP必修尚缺：'+nm.id+' '+nm.name);
         });
-        if(pickNeed>0) items2.push('AFP選修尚缺 '+pickNeed+' 科（NM1～NM4 中任選，目前已對應 '+pickDone.length+' 科'+(pickDone.length>0?'：'+pickDone.join('、'):'')+'）');
+        // For CFP, ALL NM1-NM4 not yet done must be listed
+        var pickMissing=['NM1','NM2','NM3','NM4'].filter(function(m){return!mappedNM.has(m);});
+        if(pickMissing.length>0){
+          items2.push('NM1～NM4 尚缺（CFP® 需全部完訓）：'+pickMissing.join('、'));
+        }
         if(!mappedNM.has('NM8')) items2.push('CFP®必修尚缺：NM8 綜合理財規劃（40小時，無任何抵免）');
+        items2.push('完成以上課程後，須先<strong>通過 AFP 測驗</strong>，方可報考 CFP®');
         statusEl.innerHTML='<div class="s-title" style="color:var(--amber)">尚有以下條件未完成，請補修後再報考</div>'+
           '<div class="s-body"><ul>'+items2.map(function(i){return'<li>'+i+'</li>';}).join('')+'</ul></div>';
       }
